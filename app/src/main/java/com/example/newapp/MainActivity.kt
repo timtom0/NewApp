@@ -277,10 +277,8 @@ fun App() {
                             ImeAction.Next,
                             true,
                             "Title", stext =
-                            {
-                                if (info.isNotEmpty() && title.isEmpty()) {
-                                    Text("The card must has a title")
-                                }
+                            { if (info.isNotEmpty() && title.isEmpty()) {
+                                    Text("The card must has a title") }
                             }
                         )
                         if (title.isEmpty() && info.isNotEmpty()) Spacer(
@@ -304,10 +302,8 @@ fun App() {
                                     cardList[editIndex] = CardItem(title, info)
                                     editIndex = -1
                                 }
-                                scope.launch {
-                                    sheetState.hide()
-                                    showInput = false
-                                }
+                                scope.launch { sheetState.hide()
+                                    showInput = false }
                             }
                         )
                         Spacer(modifier = Modifier.height(20.dp))
@@ -326,8 +322,7 @@ fun App() {
                                     info = ""
                                     scope.launch {
                                         sheetState.hide()
-                                        showInput = false
-                                    }
+                                        showInput = false }
                                 }) {
                                     Text(text = "Save")
                                 }
