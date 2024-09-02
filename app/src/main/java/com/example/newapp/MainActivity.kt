@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
+    ExperimentalFoundationApi::class
+)
 
 package com.example.newapp
 
@@ -187,7 +189,6 @@ fun Cards(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun App() {
     var title by remember { mutableStateOf("") }
@@ -197,7 +198,6 @@ fun App() {
     var showInput by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-
 
     Scaffold(
         floatingActionButton = {
@@ -234,7 +234,7 @@ fun App() {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-           LazyColumn(
+            LazyColumn(
                 modifier = Modifier
                     .weight(0.5f)
                     .padding(start = 10.dp, end = 10.dp)
@@ -283,7 +283,11 @@ fun App() {
                                 }
                             }
                         )
-                        if (title.isEmpty() && info.isNotEmpty()) Spacer(modifier = Modifier.height(8.dp))
+                        if (title.isEmpty() && info.isNotEmpty()) Spacer(
+                            modifier = Modifier.height(
+                                8.dp
+                            )
+                        )
 
                         TextFieldInfo(
                             value = info,
@@ -300,8 +304,10 @@ fun App() {
                                     cardList[editIndex] = CardItem(title, info)
                                     editIndex = -1
                                 }
-                                scope.launch { sheetState.hide()
-                                    showInput = false }
+                                scope.launch {
+                                    sheetState.hide()
+                                    showInput = false
+                                }
                             }
                         )
                         Spacer(modifier = Modifier.height(20.dp))
@@ -318,8 +324,10 @@ fun App() {
                                     cardList.add(CardItem(title, info))
                                     title = ""
                                     info = ""
-                                    scope.launch { sheetState.hide()
-                                    showInput = false }
+                                    scope.launch {
+                                        sheetState.hide()
+                                        showInput = false
+                                    }
                                 }) {
                                     Text(text = "Save")
                                 }
@@ -329,8 +337,10 @@ fun App() {
                                     editIndex = -1
                                     title = ""
                                     info = ""
-                                    scope.launch { sheetState.hide()
-                                    showInput = false}
+                                    scope.launch {
+                                        sheetState.hide()
+                                        showInput = false
+                                    }
                                 }) {
                                     Text(text = "Edit")
                                 }
@@ -349,9 +359,3 @@ fun App() {
 fun AppPreview() {
     App()
 }
-
-//@Preview
-//@Composable
-//fun CardPreview() {
-//    Cards("cardItemreagthyjk,u,yrhtaerweqtitle", "cardItem.info", {}, {}, )
-//}
