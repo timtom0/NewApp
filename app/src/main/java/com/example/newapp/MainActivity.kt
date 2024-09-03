@@ -56,6 +56,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -74,6 +75,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.newapp.data.CardItem
+import com.example.newapp.ui.CardViewModel
 import com.example.newapp.ui.theme.NewAppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,7 +99,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class CardItem(val title: String, val info: String)
+
 
 @Composable
 fun TextFieldInfo(
@@ -190,11 +194,11 @@ fun Cards(
 
 
 @Composable
-fun App() {
+fun App(cardViewModel: CardViewModel = viewModel()) {
     var title by remember { mutableStateOf("") }
     var info by remember { mutableStateOf("") }
     var editIndex by remember { mutableIntStateOf(-1) }
-    val cardList = remember { mutableStateListOf<CardItem>() }
+    val cardList by cardViewModel.uiState.collectAsState()
     var showInput by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -239,14 +243,13 @@ fun App() {
                     .weight(0.5f)
                     .padding(start = 10.dp, end = 10.dp)
             ) {
-                itemsIndexed(cardList) { index, cardItem ->
-
-                    Cards(cardItem.title, cardItem.info, {
-                        title = cardItem.title
-                        info = cardItem.info
+                itemsIndexed(cardList) { index, card ->
+                    Cards(card.title, card.info, {
+                        title = card.title
+                        info = card.info
                         editIndex = index
                         showInput = true
-                    }, { cardList.removeAt(index) }, modifier = Modifier.animateItemPlacement())
+                    }, { cardViewModel.delete(card) })
                 }
             }
             if (showInput) {
@@ -278,7 +281,7 @@ fun App() {
                             true,
                             "Title", stext =
                             { if (info.isNotEmpty() && title.isEmpty()) {
-                                    Text("The card must has a title") }
+                                Text("The card must has a title") }
                             }
                         )
                         if (title.isEmpty() && info.isNotEmpty()) Spacer(
@@ -295,15 +298,18 @@ fun App() {
                             "Info",
                             {
                                 if (editIndex == -1) {
-                                    cardList.add(CardItem(title, info))
+                                    cardViewModel.add(CardItem(cardList.size + 1, title, info))
                                     title = ""
                                     info = ""
                                 } else {
-                                    cardList[editIndex] = CardItem(title, info)
-                                    editIndex = -1
+                                    cardViewModel.edit(CardItem(editIndex + 1 , title, info))
+                                    title = ""
+                                    info = ""
                                 }
-                                scope.launch { sheetState.hide()
-                                    showInput = false }
+                                scope.launch {
+                                    sheetState.hide()
+                                    showInput = false
+                                    editIndex = -1}
                             }
                         )
                         Spacer(modifier = Modifier.height(20.dp))
@@ -317,7 +323,7 @@ fun App() {
 
                             if (editIndex == -1) {
                                 Button(enabled = title.isNotEmpty(), onClick = {
-                                    cardList.add(CardItem(title, info))
+                                    cardViewModel.add(CardItem(cardList.size + 1, title, info))
                                     title = ""
                                     info = ""
                                     scope.launch {
@@ -328,13 +334,13 @@ fun App() {
                                 }
                             } else {
                                 Button(enabled = title.isNotEmpty(), onClick = {
-                                    cardList[editIndex] = CardItem(title, info)
-                                    editIndex = -1
+                                    cardViewModel.edit(CardItem(editIndex + 1, title, info))
                                     title = ""
                                     info = ""
                                     scope.launch {
                                         sheetState.hide()
                                         showInput = false
+                                        editIndex = -1
                                     }
                                 }) {
                                     Text(text = "Edit")
