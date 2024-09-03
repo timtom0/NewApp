@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalFoundationApi::class
-)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 
 package com.example.newapp
 
@@ -9,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,7 +56,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -109,7 +105,7 @@ fun TextFieldInfo(
     oneLine: Boolean,
     label: String,
     keyAction: () -> Unit = {},
-    stext: @Composable (() -> Unit)? = null
+    supText: @Composable (() -> Unit)? = null
 ) {
 
 
@@ -120,7 +116,7 @@ fun TextFieldInfo(
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = oneLine,
-        supportingText = stext,
+        supportingText = supText,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = action),
         keyboardActions = KeyboardActions(onDone = { keyAction() })
     )
@@ -143,7 +139,6 @@ fun Cards(
     info: String,
     edit: () -> Unit,
     delete: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -279,7 +274,7 @@ fun App(cardViewModel: CardViewModel = viewModel()) {
                             { title = it },
                             ImeAction.Next,
                             true,
-                            "Title", stext =
+                            "Title", supText =
                             { if (info.isNotEmpty() && title.isEmpty()) {
                                 Text("The card must has a title") }
                             }
