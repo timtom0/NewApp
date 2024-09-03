@@ -30,13 +30,9 @@ class CardViewModel: ViewModel() {
             _uiState.value = _uiState.value.map { card ->
                 if (card.id == edited.id) {
                     card.copy(title = edited.title, info = edited.info)
-                } else {
-                    card
-                }
-            }
+                } else card }
         }
     }
-
 }
 
 
