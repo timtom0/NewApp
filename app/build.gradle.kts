@@ -49,13 +49,6 @@ android {
     buildToolsVersion = "34.0.0"
 }
 
-composeCompiler {
-    enableStrongSkippingMode = true
-
-    reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
-}
-
 dependencies {
 
     implementation(libs.androidx.core.ktx)
