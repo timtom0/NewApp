@@ -1,15 +1,12 @@
 package com.example.newapp
 
 import android.app.Application
-import com.example.newapp.data.AppContainer
-import com.example.newapp.data.AppDataContainer
+import com.example.newapp.data.CardDatabase
+import com.example.newapp.data.CardRepository
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class CardApplication: Application(){
-    lateinit var container: AppContainer
-    override fun onCreate() {
-        super.onCreate()
-        container = AppDataContainer(this)
-    }
+    private val database by lazy { CardDatabase.getDatabase(this) }
+    val repository by lazy { CardRepository(database.cardDao()) }
 }

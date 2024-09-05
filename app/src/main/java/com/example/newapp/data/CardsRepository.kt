@@ -1,27 +1,28 @@
 package com.example.newapp.data
 
+import androidx.annotation.WorkerThread
 import com.example.newapp.model.CardItem
 import kotlinx.coroutines.flow.Flow
 
-interface CardsRepository {
+class CardRepository(private val cardDao: CardDao) {
 
-    fun getAll(): Flow<List<CardItem>>
-    fun getCard(id: Int): Flow<CardItem?>
+    val allcards: Flow<List<CardItem>> = cardDao.getAll()
 
+    @WorkerThread
     suspend fun insert(card: CardItem)
-    suspend fun delete(card: CardItem)
+    {
+        cardDao.insert(card)
+    }
+
+    @WorkerThread
     suspend fun update(card: CardItem)
+    {
+        cardDao.update(card)
+    }
 
-}
-
-class CardRepository(private val cardDao: CardDao) : CardsRepository {
-    override fun getAll(): Flow<List<CardItem>> = cardDao.getAll()
-
-    override fun getCard(id: Int): Flow<CardItem?> = cardDao.getCard(id)
-
-    override suspend fun insert(card: CardItem) = cardDao.insert(card)
-
-    override suspend fun delete(card: CardItem) = cardDao.delete(card)
-
-    override suspend fun update(card: CardItem) = cardDao.update(card)
+    @WorkerThread
+    suspend fun delete(card: CardItem)
+    {
+        cardDao.delete(card)
+    }
 }

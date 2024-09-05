@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,8 +59,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.newapp.model.CardItem
 import com.example.newapp.ui.CardViewModel
+import com.example.newapp.ui.CardViewModelFactory
 import com.example.newapp.ui.theme.NewAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -67,6 +70,8 @@ import kotlinx.coroutines.launch
 /*-------------Main-Activity-------------*/
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: CardViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -76,7 +81,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NewAppTheme {
-                App()
+                App(viewModel)
             }
         }
     }
@@ -85,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun App(cardViewModel: CardViewModel = hiltViewModel()) {
+fun App(cardViewModel: CardViewModel = viewModel()) {
 
     /*-------------Variables-------------*/
     var title by remember { mutableStateOf("") }
@@ -136,8 +141,8 @@ fun App(cardViewModel: CardViewModel = hiltViewModel()) {
 
             /*-------------Cards-List-------------*/
             LazyColumn(modifier = Modifier
-                    .weight(0.5f)
-                    .padding(start = 10.dp, end = 10.dp)) {
+                .weight(0.5f)
+                .padding(start = 10.dp, end = 10.dp)) {
                 itemsIndexed(cardList) { index, card ->
                     Cards(card.title, card.info,
                         edit = {
@@ -154,13 +159,18 @@ fun App(cardViewModel: CardViewModel = hiltViewModel()) {
                 ModalBottomSheet(
                     shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp),
                     dragHandle = { }, onDismissRequest = { showInput = false }, sheetState = sheetState,
-                    windowInsets = WindowInsets.displayCutout,
+                    contentWindowInsets = { WindowInsets.displayCutout },
                 ) {
                     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
                     Column(modifier = Modifier
-                            .imePadding()
-                            .padding(bottom = bottomPadding + 14.dp, top = 16.dp, start = 16.dp, end = 16.dp)) {
+                        .imePadding()
+                        .padding(
+                            bottom = bottomPadding + 14.dp,
+                            top = 16.dp,
+                            start = 16.dp,
+                            end = 16.dp
+                        )) {
 
                         /*-------------Title-TextField-------------*/
                         TextFieldInfo(title, { title = it },
